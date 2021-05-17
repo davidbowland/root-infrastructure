@@ -4,8 +4,9 @@ import { administrator_role, developer_role, read_only_role } from './roles'
 import { createdBy, createdFor } from '../vars'
 
 /* Policies */
-
+// https://www.pulumi.com/docs/reference/pkg/aws/iam/policy/
 // pulumi import aws:iam/policy:Policy administrator-assume-role arn:aws:iam::494887012091:policy/administrator-assume-role
+
 const administrator_assume_role = new aws.iam.Policy(
   'administrator-assume-role',
   {

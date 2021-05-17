@@ -10,4 +10,4 @@ export AWS_SESSION_TOKEN=$(jq -r '.Credentials.SessionToken' <<< $ROLE_JSON)
 
 # Generate a preview of what will change
 cd src/
-pulumi preview
+pulumi preview -s dev

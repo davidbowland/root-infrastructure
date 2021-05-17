@@ -2,7 +2,7 @@
 name: Update dbowland.com infrastructure
 
 on:
-  pull_request:
+  push:
     branches:
       - master
 
@@ -38,6 +38,7 @@ jobs:
         with:
           command: up
           stack-name: dev
+          work-dir: ./src/
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
       # Bump minor version

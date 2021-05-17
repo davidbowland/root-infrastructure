@@ -13,7 +13,7 @@ read -p "Proceed with applying changes? (y/n) " apply
 echo
 case $apply in
   [Yy]*) # Push up changes
-         pulumi up
+         pulumi up -s dev
          ;;
   *) echo "Changes not applied"
      ;;

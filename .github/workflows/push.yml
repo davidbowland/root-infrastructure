@@ -19,6 +19,11 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 16.x
+      # Set up git commit author
+      - name: Set git name and email
+        run: |
+          git config --local user.email "dbowland1+bot@gmail.com"
+          git config --local user.name "github-actions[bot]"
       # Set up AWS credentials
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1

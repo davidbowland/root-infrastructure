@@ -1,4 +1,5 @@
 import * as aws from '@pulumi/aws'
+import { all } from '@pulumi/pulumi'
 
 import { administrator_role, developer_role, read_only_role } from './roles'
 import { createdBy, createdFor } from '../vars'
@@ -7,27 +8,30 @@ import { createdBy, createdFor } from '../vars'
 // https://www.pulumi.com/docs/reference/pkg/aws/iam/policy/
 // pulumi import aws:iam/policy:Policy administrator-assume-role arn:aws:iam::494887012091:policy/administrator-assume-role
 
-const administrator_assume_role = new aws.iam.Policy(
-  'administrator-assume-role',
+export const administrator_assume_roles = new aws.iam.Policy(
+  'administrator-assume-roles',
   {
     description: 'Assume administrator roles',
-    name: 'administrator-assume-role',
+    name: 'administrator-assume-roles',
     path: '/',
-    policy: JSON.stringify({
-      Version: '2012-10-17',
-      Statement: [
-        {
-          Effect: 'Allow',
-          Action: ['iam:Get*', 'iam:List*'],
-          Resource: '*',
-        },
-        {
-          Effect: 'Allow',
-          Action: 'sts:AssumeRole',
-          Resource: [administrator_role.arn, developer_role.arn, read_only_role.arn],
-        },
-      ],
-    }),
+    policy: all([administrator_role.arn, developer_role.arn, read_only_role.arn]).apply(
+      ([administratorRoleArn, developerRoleArn, readOnlyRoleArn]) =>
+        JSON.stringify({
+          Version: '2012-10-17',
+          Statement: [
+            {
+              Effect: 'Allow',
+              Action: ['iam:Get*', 'iam:List*'],
+              Resource: '*',
+            },
+            {
+              Effect: 'Allow',
+              Action: 'sts:AssumeRole',
+              Resource: [administratorRoleArn, developerRoleArn, readOnlyRoleArn],
+            },
+          ],
+        })
+    ),
     tags: {
       'created-by': createdBy,
       'created-for': createdFor,
@@ -38,27 +42,30 @@ const administrator_assume_role = new aws.iam.Policy(
   }
 )
 
-const developer_assume_roles = new aws.iam.Policy(
+export const developer_assume_roles = new aws.iam.Policy(
   'developer-assume-roles',
   {
     description: 'Assume developer or read-only roles',
     name: 'developer-assume-roles',
     path: '/',
-    policy: JSON.stringify({
-      Version: '2012-10-17',
-      Statement: [
-        {
-          Effect: 'Allow',
-          Action: ['iam:Get*', 'iam:List*'],
-          Resource: '*',
-        },
-        {
-          Effect: 'Allow',
-          Action: 'sts:AssumeRole',
-          Resource: [developer_role.arn, read_only_role.arn],
-        },
-      ],
-    }),
+    policy: all([developer_role.arn, read_only_role.arn]).apply(
+      ([developerRoleArn, readOnlyRoleArn]) =>
+        JSON.stringify({
+          Version: '2012-10-17',
+          Statement: [
+            {
+              Effect: 'Allow',
+              Action: ['iam:Get*', 'iam:List*'],
+              Resource: '*',
+            },
+            {
+              Effect: 'Allow',
+              Action: 'sts:AssumeRole',
+              Resource: [developerRoleArn, readOnlyRoleArn],
+            },
+          ],
+        })
+    ),
     tags: {
       'created-by': createdBy,
       'created-for': createdFor,
@@ -69,7 +76,7 @@ const developer_assume_roles = new aws.iam.Policy(
   }
 )
 
-const manage_own_credentials = new aws.iam.Policy(
+export const manage_own_credentials = new aws.iam.Policy(
   'manage-own-credentials',
   {
     description:
@@ -166,7 +173,7 @@ const manage_own_credentials = new aws.iam.Policy(
   }
 )
 
-const require_mfa = new aws.iam.Policy(
+export const require_mfa = new aws.iam.Policy(
   'require-mfa',
   {
     description:

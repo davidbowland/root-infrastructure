@@ -86,6 +86,14 @@ In extreme cases, code can be deployed locally with:
 npm run deploy
 ```
 
+### Refreshing State with Infrastructure
+
+If the state files becomes desynchronized from the infrastructure, it can be refreshed with:
+
+```bash
+npm run refresh
+```
+
 ## Workflow
 
 In order to execute or test the workflow locally, the `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` (probably set to `us-east-2`), and `GITHUB_TOKEN` environment variables must be defined. Use the [GitHub token page](https://github.com/settings/tokens) to generate a new token, if necessary.
@@ -121,6 +129,8 @@ npm run workflow:pull_request
 - [Pulumi CLI](https://www.pulumi.com/docs/reference/cli/)
 
 - [Pulumi import](https://www.pulumi.com/docs/reference/cli/pulumi_import/)
+
+- [Pulumi refresh](https://www.pulumi.com/docs/reference/cli/pulumi_refresh/)
 
 - [Pulumi unprotect](https://www.pulumi.com/docs/reference/cli/pulumi_state_unprotect/)
 

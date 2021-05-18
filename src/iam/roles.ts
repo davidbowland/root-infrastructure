@@ -10,18 +10,20 @@ import { createdBy, createdFor } from '../vars'
 export const administrator_role = new aws.iam.Role(
   'administrator-role',
   {
-    assumeRolePolicy: JSON.stringify({
-      Version: '2012-10-17',
-      Statement: [
-        {
-          Effect: 'Allow',
-          Principal: {
-            AWS: [david_user.arn],
+    assumeRolePolicy: david_user.arn.apply((davidUserArn) =>
+      JSON.stringify({
+        Version: '2012-10-17',
+        Statement: [
+          {
+            Effect: 'Allow',
+            Principal: {
+              AWS: davidUserArn,
+            },
+            Action: 'sts:AssumeRole',
           },
-          Action: 'sts:AssumeRole',
-        },
-      ],
-    }),
+        ],
+      })
+    ),
     description: 'Administrator role with full access',
     forceDetachPolicies: false,
     maxSessionDuration: 3600,
@@ -40,12 +42,14 @@ export const administrator_role = new aws.iam.Role(
 export const developer_role = new aws.iam.Role(
   'developer-role',
   {
-    assumeRolePolicy: JSON.stringify({
-      Version: '2012-10-17',
-      Statement: [
-        { Effect: 'Allow', Principal: { AWS: david_user.arn }, Action: 'sts:AssumeRole' },
-      ],
-    }),
+    assumeRolePolicy: david_user.arn.apply((davidUserArn) =>
+      JSON.stringify({
+        Version: '2012-10-17',
+        Statement: [
+          { Effect: 'Allow', Principal: { AWS: davidUserArn }, Action: 'sts:AssumeRole' },
+        ],
+      })
+    ),
     description: 'Power user access',
     forceDetachPolicies: false,
     maxSessionDuration: 3600,
@@ -64,18 +68,20 @@ export const developer_role = new aws.iam.Role(
 export const read_only_role = new aws.iam.Role(
   'read-only-role',
   {
-    assumeRolePolicy: JSON.stringify({
-      Version: '2012-10-17',
-      Statement: [
-        {
-          Effect: 'Allow',
-          Principal: {
-            AWS: [david_user.arn],
+    assumeRolePolicy: david_user.arn.apply((davidUserArn) =>
+      JSON.stringify({
+        Version: '2012-10-17',
+        Statement: [
+          {
+            Effect: 'Allow',
+            Principal: {
+              AWS: davidUserArn,
+            },
+            Action: 'sts:AssumeRole',
           },
-          Action: 'sts:AssumeRole',
-        },
-      ],
-    }),
+        ],
+      })
+    ),
     description: 'Read-only access to all services',
     forceDetachPolicies: false,
     maxSessionDuration: 3600,

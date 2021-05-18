@@ -1,4 +1,5 @@
 import * as aws from '@pulumi/aws'
+import { all } from '@pulumi/pulumi'
 
 import { administrator_role, developer_role, read_only_role } from './roles'
 import { createdBy, createdFor } from '../vars'
@@ -13,21 +14,24 @@ export const administrator_assume_roles = new aws.iam.Policy(
     description: 'Assume administrator roles',
     name: 'administrator-assume-roles',
     path: '/',
-    policy: JSON.stringify({
-      Version: '2012-10-17',
-      Statement: [
-        {
-          Effect: 'Allow',
-          Action: ['iam:Get*', 'iam:List*'],
-          Resource: '*',
-        },
-        {
-          Effect: 'Allow',
-          Action: 'sts:AssumeRole',
-          Resource: [administrator_role.arn, developer_role.arn, read_only_role.arn],
-        },
-      ],
-    }),
+    policy: all([administrator_role.arn, developer_role.arn, read_only_role.arn]).apply(
+      ([administratorRoleArn, developerRoleArn, readOnlyRoleArn]) =>
+        JSON.stringify({
+          Version: '2012-10-17',
+          Statement: [
+            {
+              Effect: 'Allow',
+              Action: ['iam:Get*', 'iam:List*'],
+              Resource: '*',
+            },
+            {
+              Effect: 'Allow',
+              Action: 'sts:AssumeRole',
+              Resource: [administratorRoleArn, developerRoleArn, readOnlyRoleArn],
+            },
+          ],
+        })
+    ),
     tags: {
       'created-by': createdBy,
       'created-for': createdFor,
@@ -44,21 +48,24 @@ export const developer_assume_roles = new aws.iam.Policy(
     description: 'Assume developer or read-only roles',
     name: 'developer-assume-roles',
     path: '/',
-    policy: JSON.stringify({
-      Version: '2012-10-17',
-      Statement: [
-        {
-          Effect: 'Allow',
-          Action: ['iam:Get*', 'iam:List*'],
-          Resource: '*',
-        },
-        {
-          Effect: 'Allow',
-          Action: 'sts:AssumeRole',
-          Resource: [developer_role.arn, read_only_role.arn],
-        },
-      ],
-    }),
+    policy: all([developer_role.arn, read_only_role.arn]).apply(
+      ([developerRoleArn, readOnlyRoleArn]) =>
+        JSON.stringify({
+          Version: '2012-10-17',
+          Statement: [
+            {
+              Effect: 'Allow',
+              Action: ['iam:Get*', 'iam:List*'],
+              Resource: '*',
+            },
+            {
+              Effect: 'Allow',
+              Action: 'sts:AssumeRole',
+              Resource: [developerRoleArn, readOnlyRoleArn],
+            },
+          ],
+        })
+    ),
     tags: {
       'created-by': createdBy,
       'created-for': createdFor,

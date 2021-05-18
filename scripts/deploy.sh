@@ -1,26 +1,18 @@
 # Ensure current version of master is pulled
-git checkout master
-git pull --ff-only
+# git checkout master
+# git pull --ff-only
 
-# Show preview of changes
-./scripts/preview.sh
+# Lint to catch syntax issues
+npm run lint
 
-# Prompt whether to apply changes
-echo
-echo "Review above preview of changes."
-read -p "Proceed with applying changes? (y/n) " apply
+./scripts/assumeAdminRole.sh
 
-echo
-case $apply in
-  [Yy]*) # Push up changes
-         pulumi up -s dev
-         ;;
-  *) echo "Changes not applied"
-     ;;
-esac
+# This command generates a preview and gives a prompt before pushing changes
+cd src/
+pulumi up -s dev
 
 # Bump the minor version
-npm version minor
+# npm version minor
 
 # Push code changes
-git push --no-verify
+# git push --no-verify

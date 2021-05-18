@@ -1,4 +1,5 @@
 import './group-memberships'
+import './group-policy-attachments'
 import './groups'
 import './policies'
 import './roles'

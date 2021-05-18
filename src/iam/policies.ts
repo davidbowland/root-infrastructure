@@ -7,11 +7,11 @@ import { createdBy, createdFor } from '../vars'
 // https://www.pulumi.com/docs/reference/pkg/aws/iam/policy/
 // pulumi import aws:iam/policy:Policy administrator-assume-role arn:aws:iam::494887012091:policy/administrator-assume-role
 
-const administrator_assume_role = new aws.iam.Policy(
-  'administrator-assume-role',
+export const administrator_assume_roles = new aws.iam.Policy(
+  'administrator-assume-roles',
   {
     description: 'Assume administrator roles',
-    name: 'administrator-assume-role',
+    name: 'administrator-assume-roles',
     path: '/',
     policy: JSON.stringify({
       Version: '2012-10-17',
@@ -38,7 +38,7 @@ const administrator_assume_role = new aws.iam.Policy(
   }
 )
 
-const developer_assume_roles = new aws.iam.Policy(
+export const developer_assume_roles = new aws.iam.Policy(
   'developer-assume-roles',
   {
     description: 'Assume developer or read-only roles',
@@ -69,7 +69,7 @@ const developer_assume_roles = new aws.iam.Policy(
   }
 )
 
-const manage_own_credentials = new aws.iam.Policy(
+export const manage_own_credentials = new aws.iam.Policy(
   'manage-own-credentials',
   {
     description:
@@ -166,7 +166,7 @@ const manage_own_credentials = new aws.iam.Policy(
   }
 )
 
-const require_mfa = new aws.iam.Policy(
+export const require_mfa = new aws.iam.Policy(
   'require-mfa',
   {
     description:

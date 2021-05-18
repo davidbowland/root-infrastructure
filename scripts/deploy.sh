@@ -3,7 +3,7 @@ git checkout master
 git pull --ff-only
 
 # Show preview of changes
-./preview.sh
+./scripts/preview.sh
 
 # Prompt whether to apply changes
 echo

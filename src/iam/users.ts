@@ -22,6 +22,16 @@ export const david_user = new aws.iam.User(
   }
 )
 
+export const adam_user = new aws.iam.User('adam-user', {
+  forceDestroy: false,
+  name: 'adam',
+  path: '/',
+  tags: {
+    'created-by': createdBy,
+    'created-for': createdFor,
+  },
+})
+
 export const svc_pulumi_admin = new aws.iam.User(
   'svc-pulumi-admin',
   {

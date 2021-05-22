@@ -187,6 +187,7 @@ export const require_mfa = new aws.iam.Policy(
           Sid: 'DenyAllExceptListedIfNoMFA',
           Effect: 'Deny',
           NotAction: [
+            'iam:ChangePassword',
             'iam:CreateVirtualMFADevice',
             'iam:EnableMFADevice',
             'iam:GetUser',

@@ -76,6 +76,47 @@ export const developer_assume_roles = new aws.iam.Policy(
   }
 )
 
+export const deny_root_iam_access = new aws.iam.Policy(
+  'deny-root-iam-access',
+  {
+    description: 'Deny access to root IAM resources',
+    name: 'deny-root-iam-access',
+    path: '/',
+    policy: JSON.stringify({
+      Version: '2012-10-17',
+      Statement: [
+        {
+          Effect: 'Deny',
+          Action: 'iam:*',
+          Resource: [
+            'arn:aws:iam::494887012091:group/Administrators',
+            'arn:aws:iam::494887012091:group/Developers',
+            'arn:aws:iam::aws:policy/AdministratorAccess',
+            'arn:aws:iam::aws:policy/IAMFullAccess',
+          ],
+        },
+        {
+          Effect: 'Deny',
+          Action: 'iam:*',
+          Resource: '*',
+          Condition: {
+            StringEquals: {
+              'iam:ResourceTag/created-for': 'root',
+            },
+          },
+        },
+      ],
+    }),
+    tags: {
+      'created-by': createdBy,
+      'created-for': createdFor,
+    },
+  },
+  {
+    protect: true,
+  }
+)
+
 export const manage_own_credentials = new aws.iam.Policy(
   'manage-own-credentials',
   {

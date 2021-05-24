@@ -7,13 +7,13 @@ import { svc_pulumi_admin, svc_pulumi_developer } from './users'
 
 export const svc_pulumi_admin_attach = new aws.iam.UserPolicyAttachment('svc-pulumi-admin-attach', {
   user: svc_pulumi_admin.name,
-  policyArn: 'arn:aws:iam::aws:policy/AdministratorAccess',
+  policyArn: aws.iam.ManagedPolicy.AdministratorAccess,
 })
 
 export const svc_pulumi_developer_attach = new aws.iam.UserPolicyAttachment(
   'svc-pulumi-developer-attach',
   {
     user: svc_pulumi_developer.name,
-    policyArn: 'arn:aws:iam::aws:policy/PowerUserAccess',
+    policyArn: aws.iam.ManagedPolicy.PowerUserAccess,
   }
 )

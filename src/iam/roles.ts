@@ -1,6 +1,7 @@
 import * as aws from '@pulumi/aws'
+import { all } from '@pulumi/pulumi'
 
-import { david_user } from './users'
+import { david_user, adam_user } from './users'
 import { createdBy, createdFor } from '../vars'
 
 /* Roles */
@@ -42,11 +43,15 @@ export const administrator_role = new aws.iam.Role(
 export const developer_role = new aws.iam.Role(
   'developer-role',
   {
-    assumeRolePolicy: david_user.arn.apply((davidUserArn) =>
+    assumeRolePolicy: all([david_user.arn, adam_user.arn]).apply(([davidUserArn, adamUserArn]) =>
       JSON.stringify({
         Version: '2012-10-17',
         Statement: [
-          { Effect: 'Allow', Principal: { AWS: davidUserArn }, Action: 'sts:AssumeRole' },
+          {
+            Effect: 'Allow',
+            Principal: { AWS: [davidUserArn, adamUserArn] },
+            Action: 'sts:AssumeRole',
+          },
         ],
       })
     ),
@@ -68,14 +73,14 @@ export const developer_role = new aws.iam.Role(
 export const read_only_role = new aws.iam.Role(
   'read-only-role',
   {
-    assumeRolePolicy: david_user.arn.apply((davidUserArn) =>
+    assumeRolePolicy: all([david_user.arn, adam_user.arn]).apply(([davidUserArn, adamUserArn]) =>
       JSON.stringify({
         Version: '2012-10-17',
         Statement: [
           {
             Effect: 'Allow',
             Principal: {
-              AWS: davidUserArn,
+              AWS: [davidUserArn, adamUserArn],
             },
             Action: 'sts:AssumeRole',
           },

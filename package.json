@@ -9,8 +9,9 @@
   },
   "scripts": {
     "deploy": "./scripts/deploy.sh",
-    "preview": "./scripts/preview.sh",
     "lint": "prettier --write . && eslint --fix .",
+    "prepare": "husky install",
+    "preview": "./scripts/preview.sh",
     "refresh": "./scripts/refresh.sh",
     "workflow:push": "act push -s AWS_ACCESS_KEY_ID -s AWS_SECRET_ACCESS_KEY -s AWS_REGION -s GITHUB_TOKEN",
     "workflow:pull_request": "act pull_request -s AWS_ACCESS_KEY_ID -s AWS_SECRET_ACCESS_KEY -s AWS_REGION -s GITHUB_TOKEN"
@@ -26,15 +27,9 @@
     "@typescript-eslint/parser": "^4.23.0",
     "eslint": "^7.26.0",
     "eslint-config-prettier": "^8.3.0",
-    "husky": "^4.3.8",
+    "husky": "^6.0.0",
     "lint-staged": "^11.0.0",
     "prettier": "^2.3.0"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "eslint --fix ."
-    }
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [

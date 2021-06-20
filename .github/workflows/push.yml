@@ -7,7 +7,7 @@ on:
       - master
 
 jobs:
-  preview:
+  deploy:
     name: Update infrastructure
     runs-on: ubuntu-latest
     steps:
@@ -50,6 +50,8 @@ jobs:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
       # Bump minor version
       - run: npm version minor
+      # Remove Husky hooks
+      - run: rm -rf .husky
       # Push tag created by version bump
       - name: Push changes
         uses: ad-m/github-push-action@master

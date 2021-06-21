@@ -1,12 +1,7 @@
 import * as aws from '@pulumi/aws'
 
 import { administrators_group, developers_group } from './groups'
-import {
-  administrator_assume_roles,
-  developer_assume_roles,
-  manage_own_credentials,
-  require_mfa,
-} from './policies'
+import { administrator_assume_roles, developer_assume_roles, manage_own_credentials, require_mfa } from './policies'
 
 /* Group Policy Attachments */
 // https://www.pulumi.com/docs/reference/pkg/aws/iam/grouppolicyattachment/

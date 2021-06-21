@@ -49,23 +49,22 @@ export const developer_assume_roles = new aws.iam.Policy(
     description: 'Assume developer or read-only roles',
     name: 'developer-assume-roles',
     path: '/',
-    policy: all([developer_role.arn, read_only_role.arn]).apply(
-      ([developerRoleArn, readOnlyRoleArn]) =>
-        JSON.stringify({
-          Version: '2012-10-17',
-          Statement: [
-            {
-              Effect: 'Allow',
-              Action: ['iam:Get*', 'iam:List*'],
-              Resource: '*',
-            },
-            {
-              Effect: 'Allow',
-              Action: 'sts:AssumeRole',
-              Resource: [developerRoleArn, readOnlyRoleArn],
-            },
-          ],
-        })
+    policy: all([developer_role.arn, read_only_role.arn]).apply(([developerRoleArn, readOnlyRoleArn]) =>
+      JSON.stringify({
+        Version: '2012-10-17',
+        Statement: [
+          {
+            Effect: 'Allow',
+            Action: ['iam:Get*', 'iam:List*'],
+            Resource: '*',
+          },
+          {
+            Effect: 'Allow',
+            Action: 'sts:AssumeRole',
+            Resource: [developerRoleArn, readOnlyRoleArn],
+          },
+        ],
+      })
     ),
     tags: {
       'created-by': createdBy,
@@ -83,33 +82,32 @@ export const deny_root_iam_access = new aws.iam.Policy(
     description: 'Deny access to root IAM resources',
     name: 'deny-root-iam-access',
     path: '/',
-    policy: all([administrators_group.arn, developers_group.arn]).apply(
-      ([administratorGroupArn, developersGroupArn]) =>
-        JSON.stringify({
-          Version: '2012-10-17',
-          Statement: [
-            {
-              Effect: 'Deny',
-              Action: 'iam:*',
-              Resource: [
-                administratorGroupArn,
-                developersGroupArn,
-                aws.iam.ManagedPolicy.AdministratorAccess,
-                aws.iam.ManagedPolicy.IAMFullAccess,
-              ],
-            },
-            {
-              Effect: 'Deny',
-              Action: 'iam:*',
-              Resource: '*',
-              Condition: {
-                StringEquals: {
-                  'iam:ResourceTag/created-for': 'root',
-                },
+    policy: all([administrators_group.arn, developers_group.arn]).apply(([administratorGroupArn, developersGroupArn]) =>
+      JSON.stringify({
+        Version: '2012-10-17',
+        Statement: [
+          {
+            Effect: 'Deny',
+            Action: 'iam:*',
+            Resource: [
+              administratorGroupArn,
+              developersGroupArn,
+              aws.iam.ManagedPolicy.AdministratorAccess,
+              aws.iam.ManagedPolicy.IAMFullAccess,
+            ],
+          },
+          {
+            Effect: 'Deny',
+            Action: 'iam:*',
+            Resource: '*',
+            Condition: {
+              StringEquals: {
+                'iam:ResourceTag/created-for': 'root',
               },
             },
-          ],
-        })
+          },
+        ],
+      })
     ),
     tags: {
       'created-by': createdBy,
@@ -124,8 +122,7 @@ export const deny_root_iam_access = new aws.iam.Policy(
 export const manage_own_credentials = new aws.iam.Policy(
   'manage-own-credentials',
   {
-    description:
-      'Allows users to manage their own credentials including changing their password and setting up MFA.',
+    description: 'Allows users to manage their own credentials including changing their password and setting up MFA.',
     name: 'manage-own-credentials',
     path: '/',
     policy: JSON.stringify({
@@ -146,12 +143,7 @@ export const manage_own_credentials = new aws.iam.Policy(
         {
           Sid: 'AllowManageOwnAccessKeys',
           Effect: 'Allow',
-          Action: [
-            'iam:CreateAccessKey',
-            'iam:DeleteAccessKey',
-            'iam:ListAccessKeys',
-            'iam:UpdateAccessKey',
-          ],
+          Action: ['iam:CreateAccessKey', 'iam:DeleteAccessKey', 'iam:ListAccessKeys', 'iam:UpdateAccessKey'],
           Resource: 'arn:aws:iam::*:user/${aws:username}',
         },
         {
@@ -198,12 +190,7 @@ export const manage_own_credentials = new aws.iam.Policy(
         {
           Sid: 'AllowManageOwnUserMFA',
           Effect: 'Allow',
-          Action: [
-            'iam:DeactivateMFADevice',
-            'iam:EnableMFADevice',
-            'iam:ListMFADevices',
-            'iam:ResyncMFADevice',
-          ],
+          Action: ['iam:DeactivateMFADevice', 'iam:EnableMFADevice', 'iam:ListMFADevices', 'iam:ResyncMFADevice'],
           Resource: 'arn:aws:iam::*:user/${aws:username}',
         },
       ],
@@ -221,8 +208,7 @@ export const manage_own_credentials = new aws.iam.Policy(
 export const require_mfa = new aws.iam.Policy(
   'require-mfa',
   {
-    description:
-      'Makes the account require MFA but DOES NOT GRANT THE ABILITY TO ADD MFA OR CHANGE PASSWORD.',
+    description: 'Makes the account require MFA but DOES NOT GRANT THE ABILITY TO ADD MFA OR CHANGE PASSWORD.',
     name: 'require-mfa',
     path: '/',
     policy: JSON.stringify({

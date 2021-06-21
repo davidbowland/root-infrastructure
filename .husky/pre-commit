@@ -1,0 +1,2 @@
+# Prettify and lint staged files
+npx lint-staged

@@ -1,0 +1,2 @@
+# Lint to enforce consistency
+npx eslint --fix .

@@ -10,7 +10,7 @@
   "scripts": {
     "deploy": "./scripts/deploy.sh",
     "lint": "prettier --write . && eslint --fix .",
-    "prepare": "if test \"$NODE_ENV\" != \"production\" ; then husky install ; fi",
+    "prepare": "if [ \"$NODE_ENV\" != \"production\" ]; then husky install ; fi",
     "preview": "./scripts/preview.sh",
     "refresh": "./scripts/refresh.sh",
     "workflow:push": "act push -s AWS_ACCESS_KEY_ID -s AWS_SECRET_ACCESS_KEY -s AWS_REGION -s GITHUB_TOKEN",

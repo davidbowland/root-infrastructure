@@ -1,6 +1,7 @@
-# Ensure current version of master is pulled
-# git checkout master
-# git pull --ff-only
+#!/bin/sh
+
+# Stop immediately on error
+set -e
 
 # Lint to catch syntax issues
 npm run lint
@@ -10,9 +11,3 @@ npm run lint
 # This command generates a preview and gives a prompt before pushing changes
 cd src/
 pulumi up -s dev
-
-# Bump the minor version
-# npm version minor
-
-# Push code changes
-# git push --no-verify

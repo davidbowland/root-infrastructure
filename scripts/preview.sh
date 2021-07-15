@@ -1,3 +1,8 @@
+#!/bin/sh
+
+# Stop immediately on error
+set -e
+
 # Lint to catch syntax issues
 npm run lint
 

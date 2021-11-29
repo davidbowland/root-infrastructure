@@ -1,13 +1,14 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # Stop immediately on error
 set -e
 
+if [[ -z "$1" ]]; then
+  $(./scripts/assumeAdminRole.sh)
+fi
+
 # Lint to catch syntax issues
 npm run lint
 
-./scripts/assumeAdminRole.sh
-
 # Generate a preview of what will change
-cd src/
 pulumi preview -s dev

@@ -42,7 +42,7 @@ Add a `administrator` profile to the same credentials file:
 
 ```toml
 [administrator]
-role_arn=arn:aws:iam::494887012091:role/administrator
+role_arn=arn:aws:iam::<AWS_ACCOUNT_ID>:role/administrator
 source_profile=default
 mfa_serial=<YOUR_MFA_ARN>
 region=us-east-2

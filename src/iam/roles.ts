@@ -2,11 +2,9 @@ import * as aws from '@pulumi/aws'
 import { all } from '@pulumi/pulumi'
 
 import { david_user, adam_user } from './users'
-import { createdBy, createdFor } from '../vars'
+import { createdBy, createdFor } from '@vars'
 
-/* Roles */
 // https://www.pulumi.com/docs/reference/pkg/aws/iam/role/
-// pulumi import aws:iam/role:Role administrator-role administrator
 
 export const administrator_role = new aws.iam.Role(
   'administrator-role',

@@ -3,7 +3,6 @@ import * as aws from '@pulumi/aws'
 import { administrators_group, developers_group } from './groups'
 import { adam_user, david_user } from './users'
 
-/* Group membership */
 // https://www.pulumi.com/docs/reference/pkg/aws/iam/groupmembership/
 
 export const administrator_members = new aws.iam.GroupMembership('administrator-members', {

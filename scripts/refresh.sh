@@ -1,10 +1,14 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # Stop immediately on error
 set -e
 
-./scripts/assumeAdminRole.sh
+if [[ -z "$1" ]]; then
+  $(./scripts/assumeAdminRole.sh)
+fi
 
-# Refresh state with infrastructure
-cd src/
-pulumi refresh -s dev
+# Clear any pending operations on the stack
+pulumi stack -s dev export | jq ".deployment.pending_operations=[]" | pulumi stack -s dev import
+
+# Refresh infrastructure state with no prompt
+pulumi refresh -s dev -y

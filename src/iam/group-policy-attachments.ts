@@ -3,9 +3,7 @@ import * as aws from '@pulumi/aws'
 import { administrators_group, developers_group } from './groups'
 import { administrator_assume_roles, developer_assume_roles, manage_own_credentials, require_mfa } from './policies'
 
-/* Group Policy Attachments */
 // https://www.pulumi.com/docs/reference/pkg/aws/iam/grouppolicyattachment/
-// pulumi import aws:iam/groupPolicyAttachment:GroupPolicyAttachment administrators-administrator-assume-roles Administrators/arn:aws:iam::494887012091:policy/administrator-assume-roles
 
 // Administrators group
 

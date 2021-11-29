@@ -1,10 +1,8 @@
 import * as aws from '@pulumi/aws'
 
-import { createdBy, createdFor } from '../vars'
+import { createdBy, createdFor } from '@vars'
 
-/* Users */
 // https://www.pulumi.com/docs/reference/pkg/aws/iam/user/
-// pulumi import aws:iam/user:User david-user david
 
 export const david_user = new aws.iam.User(
   'david-user',

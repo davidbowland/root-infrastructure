@@ -1,8 +1,8 @@
 {
-  "name": "dbowland-pulumi-development",
+  "name": "root-infrastructure",
   "version": "1.11.0",
   "private": true,
-  "description": "dbowland.com development infrastructure",
+  "description": "Root infrastructure for all projects on https://github.com/davidbowland/",
   "author": "David Bowland",
   "engines": {
     "node": "^16.0.0"
@@ -43,10 +43,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/davidbowland/dbowland-pulumi-development.git"
+    "url": "git+https://github.com/davidbowland/root-infrastructure.git"
   },
   "bugs": {
-    "url": "https://github.com/davidbowland/dbowland-pulumi-development/issues"
+    "url": "https://github.com/davidbowland/root-infrastructure/issues"
   },
-  "homepage": "https://github.com/davidbowland/dbowland-pulumi-development#readme"
+  "homepage": "https://github.com/davidbowland/root-infrastructure#readme"
 }

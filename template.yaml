@@ -23,6 +23,8 @@ Resources:
               AWS: !Sub '${AWS::AccountId}'
             Action: 'sts:AssumeRole'
       Description: Administrator role with full access
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
       MaxSessionDuration: 3600
       RoleName: administrator
       Tags:
@@ -50,6 +52,9 @@ Resources:
               AWS: !Sub '${AWS::AccountId}'
             Action: 'sts:AssumeRole'
       Description: Power user access
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/IAMFullAccess
+        - arn:aws:iam::aws:policy/PowerUserAccess
       MaxSessionDuration: 3600
       RoleName: developer
       Tags:
@@ -88,17 +93,12 @@ Resources:
     DeletionPolicy: Retain
     Properties:
       GroupName: Administrators
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/AdministratorAccess
 
   DeveloperGroup:
     Type: AWS::IAM::Group
     DeletionPolicy: Retain
     Properties:
       GroupName: Developers
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/IAMFullAccess
-        - arn:aws:iam::aws:policy/PowerUserAccess
 
   # Users
 

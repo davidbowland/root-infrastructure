@@ -3,5 +3,5 @@
 # Stop immediately on error
 set -e
 
-# Prettify and lint staged files
+# Prettify staged files
 npx lint-staged

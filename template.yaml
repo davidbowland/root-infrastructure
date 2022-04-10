@@ -1,0 +1,357 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  Infrastructure for dbowland.com root
+
+Resources:
+  # Roles
+
+  AdminRole:
+    Type: AWS::IAM::Role
+    DeletionPolicy: Retain
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !Sub 'arn:aws:iam::${AWS::AccountId}:user/david'
+            Action:
+              - 'sts:AssumeRole'
+          - Effect: Allow
+            Principal:
+              AWS: !Sub '${AWS::AccountId}'
+            Action: 'sts:AssumeRole'
+      Description: Administrator role with full access
+      MaxSessionDuration: 3600
+      RoleName: administrator
+      Tags:
+        - Key: 'created-by'
+          Value: 'root-infrastructure'
+        - Key: 'created-for'
+          Value: 'root'
+
+  DeveloperRole:
+    Type: AWS::IAM::Role
+    DeletionPolicy: Retain
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !Sub 'arn:aws:iam::${AWS::AccountId}:user/adam'
+                - !Sub 'arn:aws:iam::${AWS::AccountId}:user/david'
+            Action:
+              - 'sts:AssumeRole'
+          - Effect: Allow
+            Principal:
+              AWS: !Sub '${AWS::AccountId}'
+            Action: 'sts:AssumeRole'
+      Description: Power user access
+      MaxSessionDuration: 3600
+      RoleName: developer
+      Tags:
+        - Key: 'created-by'
+          Value: 'root-infrastructure'
+        - Key: 'created-for'
+          Value: 'root'
+
+  ReadOnlyRole:
+    Type: AWS::IAM::Role
+    DeletionPolicy: Retain
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !Sub 'arn:aws:iam::${AWS::AccountId}:user/adam'
+                - !Sub 'arn:aws:iam::${AWS::AccountId}:user/david'
+            Action:
+              - 'sts:AssumeRole'
+      Description: Read-only access to all services
+      MaxSessionDuration: 3600
+      RoleName: read-only
+      Tags:
+        - Key: 'created-by'
+          Value: 'root-infrastructure'
+        - Key: 'created-for'
+          Value: 'root'
+
+  # Groups
+
+  AdminGroup:
+    Type: AWS::IAM::Group
+    DeletionPolicy: Retain
+    Properties:
+      GroupName: Administrators
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
+
+  DeveloperGroup:
+    Type: AWS::IAM::Group
+    DeletionPolicy: Retain
+    Properties:
+      GroupName: Developers
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/IAMFullAccess
+        - arn:aws:iam::aws:policy/PowerUserAccess
+
+  # Users
+
+  AdamUser:
+    Type: AWS::IAM::User
+    DeletionPolicy: Retain
+    Properties:
+      Groups:
+        - !Sub '${DeveloperGroup}'
+      Tags:
+        - Key: 'created-by'
+          Value: 'root-infrastructure'
+        - Key: 'created-for'
+          Value: 'root'
+      UserName: adam
+
+  DavidUser:
+    Type: AWS::IAM::User
+    DeletionPolicy: Retain
+    Properties:
+      Groups:
+        - !Sub '${AdminGroup}'
+        - !Sub '${DeveloperGroup}'
+      Tags:
+        - Key: 'created-by'
+          Value: 'root-infrastructure'
+        - Key: 'created-for'
+          Value: 'root'
+      UserName: david
+
+  InfraAdminUser:
+    Type: AWS::IAM::User
+    DeletionPolicy: Retain
+    Properties:
+      Tags:
+        - Key: 'created-by'
+          Value: 'root-infrastructure'
+        - Key: 'created-for'
+          Value: 'root'
+      UserName: root-infra-admin
+
+  InfraChooseeUser:
+    Type: AWS::IAM::User
+    Properties:
+      Tags:
+        - Key: 'created-by'
+          Value: 'root-infrastructure'
+        - Key: 'created-for'
+          Value: 'root'
+      UserName: root-infra-choosee
+
+  InfraDbowlandUser:
+    Type: AWS::IAM::User
+    Properties:
+      Tags:
+        - Key: 'created-by'
+          Value: 'root-infrastructure'
+        - Key: 'created-for'
+          Value: 'root'
+      UserName: root-infra-dbowland
+
+  InfraEmailsUser:
+    Type: AWS::IAM::User
+    Properties:
+      Tags:
+        - Key: 'created-by'
+          Value: 'root-infrastructure'
+        - Key: 'created-for'
+          Value: 'root'
+      UserName: root-infra-emails
+
+  InfraJokesUser:
+    Type: AWS::IAM::User
+    Properties:
+      Tags:
+        - Key: 'created-by'
+          Value: 'root-infrastructure'
+        - Key: 'created-for'
+          Value: 'root'
+      UserName: root-infra-jokes
+
+  InfraLinksUser:
+    Type: AWS::IAM::User
+    Properties:
+      Tags:
+        - Key: 'created-by'
+          Value: 'root-infrastructure'
+        - Key: 'created-for'
+          Value: 'root'
+      UserName: root-infra-links
+
+  # Policies
+
+  AssumeAdminGroupPolicy:
+    Type: AWS::IAM::Policy
+    DeletionPolicy: Retain
+    Properties:
+      Groups:
+        - !Sub '${AdminGroup}'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'iam:Get*'
+              - 'iam:List*'
+            Resource: '*'
+          - Effect: Allow
+            Action: 'sts:AssumeRole'
+            Resource:
+              - !Sub '${AdminRole.Arn}'
+              - !Sub '${DeveloperRole.Arn}'
+              - !Sub '${ReadOnlyRole.Arn}'
+      PolicyName: assume-administrator-role
+      Users:
+        - !Sub '${InfraAdminUser}'
+
+  AssumeDeveloperGroupPolicy:
+    Type: AWS::IAM::Policy
+    DeletionPolicy: Retain
+    Properties:
+      Groups:
+        - !Sub '${DeveloperGroup}'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'iam:Get*'
+              - 'iam:List*'
+            Resource: '*'
+          - Effect: Allow
+            Action: 'sts:AssumeRole'
+            Resource:
+              - !Sub '${DeveloperRole.Arn}'
+              - !Sub '${ReadOnlyRole.Arn}'
+      PolicyName: assume-developer-role
+      Users:
+        - !Sub '${InfraChooseeUser}'
+        - !Sub '${InfraDbowlandUser}'
+        - !Sub '${InfraEmailsUser}'
+        - !Sub '${InfraJokesUser}'
+        - !Sub '${InfraLinksUser}'
+
+  DenyRootPolicy:
+    Type: AWS::IAM::Policy
+    DeletionPolicy: Retain
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Deny
+            Action:
+              - 'iam:*'
+            Resource:
+              - arn:aws:iam::aws:policy/AdministratorAccess
+              - arn:aws:iam::aws:policy/IAMFullAccess
+          - Effect: Deny
+            Action: '*'
+            Resource: '*'
+            Condition:
+              StringEquals:
+                'iam:ResourceTag/created-for': 'root'
+      PolicyName: deny-root-iam-access
+      Roles:
+        - !Sub '${DeveloperRole}'
+
+  ManageOwnCredentialsPolicy:
+    Type: AWS::IAM::Policy
+    DeletionPolicy: Retain
+    Properties:
+      Groups:
+        - !Sub '${AdminGroup}'
+        - !Sub '${DeveloperGroup}'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'iam:GetAccountPasswordPolicy'
+              - 'iam:ListVirtualMFADevices'
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - 'iam:ChangePassword'
+              - 'iam:GetUser'
+            Resource: 'arn:aws:iam::*:user/${aws:username}'
+          - Effect: Allow
+            Action:
+              - 'iam:CreateAccessKey'
+              - 'iam:DeleteAccessKey'
+              - 'iam:ListAccessKeys'
+              - 'iam:UpdateAccessKey'
+            Resource: 'arn:aws:iam::*:user/${aws:username}'
+          - Effect: Allow
+            Action:
+              - 'iam:DeleteSigningCertificate'
+              - 'iam:ListSigningCertificates'
+              - 'iam:UpdateSigningCertificate'
+              - 'iam:UploadSigningCertificate'
+            Resource: 'arn:aws:iam::*:user/${aws:username}'
+          - Effect: Allow
+            Action:
+              - 'iam:DeleteSSHPublicKey'
+              - 'iam:GetSSHPublicKey'
+              - 'iam:ListSSHPublicKeys'
+              - 'iam:UpdateSSHPublicKey'
+              - 'iam:UploadSSHPublicKey'
+            Resource: 'arn:aws:iam::*:user/${aws:username}'
+          - Effect: Allow
+            Action:
+              - 'iam:CreateServiceSpecificCredential'
+              - 'iam:DeleteServiceSpecificCredential'
+              - 'iam:ListServiceSpecificCredentials'
+              - 'iam:ResetServiceSpecificCredential'
+              - 'iam:UpdateServiceSpecificCredential'
+            Resource: 'arn:aws:iam::*:user/${aws:username}'
+          - Effect: Allow
+            Action:
+              - 'iam:CreateVirtualMFADevice'
+              - 'iam:DeleteVirtualMFADevice'
+            Resource: 'arn:aws:iam::*:user/${aws:username}'
+          - Effect: Allow
+            Action:
+              - 'iam:DeactivateMFADevice'
+              - 'iam:EnableMFADevice'
+              - 'iam:ListMFADevices'
+              - 'iam:ResyncMFADevice'
+            Resource: 'arn:aws:iam::*:user/${aws:username}'
+      PolicyName: manage-own-credentials
+
+  RequireMfaPolicy:
+    Type: AWS::IAM::Policy
+    DeletionPolicy: Retain
+    Properties:
+      Groups:
+        - !Sub '${AdminGroup}'
+        - !Sub '${DeveloperGroup}'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Deny
+            NotAction:
+              - 'iam:ChangePassword'
+              - 'iam:CreateVirtualMFADevice'
+              - 'iam:EnableMFADevice'
+              - 'iam:GetUser'
+              - 'iam:ListMFADevices'
+              - 'iam:ListVirtualMFADevices'
+              - 'iam:ResyncMFADevice'
+              - 'sts:GetSessionToken'
+            Resource: '*'
+            Condition:
+              BoolIfExists:
+                'aws:MultiFactorAuthPresent': 'false'
+      PolicyName: require-mfa

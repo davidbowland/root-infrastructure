@@ -1,45 +1,10 @@
 {
   "name": "root-infrastructure",
   "version": "1.12.0",
-  "private": true,
-  "description": "Root infrastructure for all projects on https://github.com/davidbowland/",
+  "description": "Infrastructure for root",
   "author": "David Bowland",
   "engines": {
     "node": "^16.0.0"
-  },
-  "scripts": {
-    "deploy": "./scripts/deploy.sh",
-    "lint": "prettier --write . && eslint --fix .",
-    "prepare": "if [ \"$NODE_ENV\" != \"production\" ]; then husky install ; fi",
-    "preview": "./scripts/preview.sh",
-    "refresh": "./scripts/refresh.sh",
-    "workflow:push": "act push -s AWS_ACCESS_KEY_ID -s AWS_SECRET_ACCESS_KEY -s AWS_REGION -s GITHUB_TOKEN",
-    "workflow:pull_request": "act pull_request -s AWS_ACCESS_KEY_ID -s AWS_SECRET_ACCESS_KEY -s AWS_REGION -s GITHUB_TOKEN"
-  },
-  "dependencies": {
-    "@pulumi/aws": "^4.0.0",
-    "@pulumi/awsx": "^0.30.0",
-    "@pulumi/pulumi": "^3.0.0",
-    "@types/node": "^15.3.0",
-    "tsconfig-paths": "^3.12.0"
-  },
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^4.23.0",
-    "@typescript-eslint/parser": "^4.23.0",
-    "eslint": "^7.26.0",
-    "eslint-config-prettier": "^8.3.0",
-    "husky": "^6.0.0",
-    "lint-staged": "^11.0.0",
-    "prettier": "^2.3.0"
-  },
-  "lint-staged": {
-    "**/*.{js,jsx,ts,tsx}": [
-      "prettier --write --ignore-unknown",
-      "eslint --fix"
-    ],
-    "**/*": [
-      "prettier --write --ignore-unknown"
-    ]
   },
   "repository": {
     "type": "git",
@@ -48,5 +13,21 @@
   "bugs": {
     "url": "https://github.com/davidbowland/root-infrastructure/issues"
   },
-  "homepage": "https://github.com/davidbowland/root-infrastructure#readme"
+  "homepage": "https://github.com/davidbowland/root-infrastructure#readme",
+  "scripts": {
+    "deploy": "./deploy.sh",
+    "prepare": "if [ \"$NODE_ENV\" != \"production\" ]; then husky install ; fi",
+    "lint": "prettier --write ."
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "husky": "^6.0.0",
+    "lint-staged": "^11.0.0",
+    "prettier": "^2.3.0"
+  },
+  "lint-staged": {
+    "**/*": [
+      "prettier --write --ignore-unknown"
+    ]
+  }
 }

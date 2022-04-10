@@ -1,8 +1,0 @@
-import './group-memberships'
-import './group-policy-attachments'
-import './groups'
-import './policies'
-import './role-policy-attachments'
-import './roles'
-import './user-policy-attachments'
-import './users'

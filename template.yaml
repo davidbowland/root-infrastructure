@@ -251,11 +251,10 @@ Resources:
         Version: '2012-10-17'
         Statement:
           - Effect: Deny
-            Action:
-              - 'iam:*'
+            Action: 'iam:*'
             Resource:
-              - arn:aws:iam::aws:policy/AdministratorAccess
-              - arn:aws:iam::aws:policy/IAMFullAccess
+              - !Sub '${AdminGroup.Arn}'
+              - !Sub '${DeveloperGroup.Arn}'
           - Effect: Deny
             Action: '*'
             Resource: '*'

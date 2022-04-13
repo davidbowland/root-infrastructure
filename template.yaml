@@ -3,6 +3,75 @@ Description: >-
   Infrastructure for dbowland.com root
 
 Resources:
+  # Permission boundaries
+
+  RootPermissionBoundary:
+    Type: AWS::IAM::ManagedPolicy
+    DeletionPolicy: Retain
+    Properties:
+      Description: Permission boundary blocking access to root resources
+      ManagedPolicyName: root-boundary
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action: '*'
+            Resource: '*'
+          - Effect: Deny
+            Action:
+              - 'account:*'
+              - 'aws-portal:Modify*'
+              - 'savingsplans:*'
+              - 'cur:*'
+              - 'ce:*'
+            Resource: '*'
+          - Effect: Deny
+            Action:
+              - 'iam:DeletePolicy'
+              - 'iam:DeletePolicyVersion'
+              - 'iam:CreatePolicyVersion'
+              - 'iam:SetDefaultPolicyVersion'
+            Resource: !Sub 'arn:aws:iam::${AWS::AccountId}:policy/root-boundary'
+          - Effect: Deny
+            Action:
+              - 'iam:DeleteUserPermissionsBoundary'
+              - 'iam:DeleteRolePermissionsBoundary'
+            Resource:
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:user/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
+            Condition:
+              StringEquals:
+                'iam:PermissionsBoundary': !Sub 'arn:aws:iam::${AWS::AccountId}:policy/root-boundary'
+          - Effect: Deny
+            Action:
+              - 'iam:PutUserPermissionsBoundary'
+              - 'iam:PutRolePermissionsBoundary'
+            Resource:
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:user/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
+            Condition:
+              StringNotEquals:
+                'iam:PermissionsBoundary': !Sub 'arn:aws:iam::${AWS::AccountId}:policy/root-boundary'
+          - Effect: Deny
+            Action:
+              - 'iam:CreateUser'
+              - 'iam:CreateRole'
+            Resource:
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:user/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
+            Condition:
+              StringNotEquals:
+                'iam:PermissionsBoundary': !Sub 'arn:aws:iam::${AWS::AccountId}:policy/root-boundary'
+          - Effect: Deny
+            NotAction:
+              - 'iam:Get*'
+              - 'iam:List*'
+              - 'sts:AssumeRole'
+            Resource: '*'
+            Condition:
+              StringEquals:
+                'iam:ResourceTag/created-for': 'root'
+
   # Roles
 
   AdminRole:
@@ -56,6 +125,7 @@ Resources:
         - arn:aws:iam::aws:policy/IAMFullAccess
         - arn:aws:iam::aws:policy/PowerUserAccess
       MaxSessionDuration: 3600
+      PermissionsBoundary: !Sub '${RootPermissionBoundary}'
       RoleName: developer
       Tags:
         - Key: 'created-by'

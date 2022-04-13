@@ -194,7 +194,6 @@ Resources:
 
   AssumeAdminGroupPolicy:
     Type: AWS::IAM::Policy
-    DeletionPolicy: Retain
     Properties:
       Groups:
         - !Sub '${AdminGroup}'
@@ -218,7 +217,6 @@ Resources:
 
   AssumeDeveloperGroupPolicy:
     Type: AWS::IAM::Policy
-    DeletionPolicy: Retain
     Properties:
       Groups:
         - !Sub '${DeveloperGroup}'
@@ -243,35 +241,17 @@ Resources:
         - !Sub '${InfraJokesUser}'
         - !Sub '${InfraLinksUser}'
 
-  DenyRootPolicy:
-    Type: AWS::IAM::Policy
-    DeletionPolicy: Retain
-    Properties:
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Deny
-            Action: 'iam:*'
-            Resource:
-              - !Sub '${AdminGroup.Arn}'
-              - !Sub '${DeveloperGroup.Arn}'
-          - Effect: Deny
-            Action: '*'
-            Resource: '*'
-            Condition:
-              StringEquals:
-                'iam:ResourceTag/created-for': 'root'
-      PolicyName: deny-root-iam-access
-      Roles:
-        - !Sub '${DeveloperRole}'
+  # Managed Policies
 
   ManageOwnCredentialsPolicy:
-    Type: AWS::IAM::Policy
+    Type: AWS::IAM::ManagedPolicy
     DeletionPolicy: Retain
     Properties:
+      Description: Allow users to manage MFA and change password
       Groups:
         - !Sub '${AdminGroup}'
         - !Sub '${DeveloperGroup}'
+      ManagedPolicyName: manage-own-credentials
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -327,15 +307,16 @@ Resources:
               - 'iam:ListMFADevices'
               - 'iam:ResyncMFADevice'
             Resource: 'arn:aws:iam::*:user/${aws:username}'
-      PolicyName: manage-own-credentials
 
   RequireMfaPolicy:
-    Type: AWS::IAM::Policy
+    Type: AWS::IAM::ManagedPolicy
     DeletionPolicy: Retain
     Properties:
+      Description: Require MFA for login
       Groups:
         - !Sub '${AdminGroup}'
         - !Sub '${DeveloperGroup}'
+      ManagedPolicyName: require-mfa
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -353,4 +334,3 @@ Resources:
             Condition:
               BoolIfExists:
                 'aws:MultiFactorAuthPresent': 'false'
-      PolicyName: require-mfa

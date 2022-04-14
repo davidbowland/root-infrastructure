@@ -178,6 +178,7 @@ Resources:
     Properties:
       Groups:
         - !Sub '${DeveloperGroup}'
+      PermissionsBoundary: !Sub '${RootPermissionBoundary}'
       Tags:
         - Key: 'created-by'
           Value: 'root-infrastructure'
@@ -213,6 +214,7 @@ Resources:
   InfraChooseeUser:
     Type: AWS::IAM::User
     Properties:
+      PermissionsBoundary: !Sub '${RootPermissionBoundary}'
       Tags:
         - Key: 'created-by'
           Value: 'root-infrastructure'
@@ -223,6 +225,7 @@ Resources:
   InfraDbowlandUser:
     Type: AWS::IAM::User
     Properties:
+      PermissionsBoundary: !Sub '${RootPermissionBoundary}'
       Tags:
         - Key: 'created-by'
           Value: 'root-infrastructure'
@@ -233,6 +236,7 @@ Resources:
   InfraEmailsUser:
     Type: AWS::IAM::User
     Properties:
+      PermissionsBoundary: !Sub '${RootPermissionBoundary}'
       Tags:
         - Key: 'created-by'
           Value: 'root-infrastructure'
@@ -243,6 +247,7 @@ Resources:
   InfraJokesUser:
     Type: AWS::IAM::User
     Properties:
+      PermissionsBoundary: !Sub '${RootPermissionBoundary}'
       Tags:
         - Key: 'created-by'
           Value: 'root-infrastructure'
@@ -253,6 +258,7 @@ Resources:
   InfraLinksUser:
     Type: AWS::IAM::User
     Properties:
+      PermissionsBoundary: !Sub '${RootPermissionBoundary}'
       Tags:
         - Key: 'created-by'
           Value: 'root-infrastructure'

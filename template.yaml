@@ -31,7 +31,9 @@ Resources:
               - 'iam:DeletePolicyVersion'
               - 'iam:CreatePolicyVersion'
               - 'iam:SetDefaultPolicyVersion'
-            Resource: !Sub 'arn:aws:iam::${AWS::AccountId}:policy/root-boundary'
+            Resource:
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/root-boundary'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/developer-boundary'
           - Effect: Deny
             Action:
               - 'iam:DeleteUserPermissionsBoundary'
@@ -41,7 +43,9 @@ Resources:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
             Condition:
               StringEquals:
-                'iam:PermissionsBoundary': !Sub 'arn:aws:iam::${AWS::AccountId}:policy/root-boundary'
+                'iam:PermissionsBoundary':
+                  - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/root-boundary'
+                  - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/developer-boundary'
           - Effect: Deny
             Action:
               - 'iam:PutUserPermissionsBoundary'
@@ -61,7 +65,9 @@ Resources:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
             Condition:
               StringNotEquals:
-                'iam:PermissionsBoundary': !Sub 'arn:aws:iam::${AWS::AccountId}:policy/root-boundary'
+                'iam:PermissionsBoundary':
+                  - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/root-boundary'
+                  - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/developer-boundary'
           - Effect: Deny
             NotAction:
               - 'iam:Get*'
@@ -71,6 +77,101 @@ Resources:
             Condition:
               StringEquals:
                 'iam:ResourceTag/created-for': 'root'
+
+  DeveloperPermissionBoundary:
+    Type: AWS::IAM::ManagedPolicy
+    DeletionPolicy: Retain
+    Properties:
+      Description: Permission boundary blocking access to production resources
+      ManagedPolicyName: developer-boundary
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action: '*'
+            Resource: '*'
+          - Effect: Deny
+            Action:
+              - 'account:*'
+              - 'aws-portal:Modify*'
+              - 'savingsplans:*'
+              - 'cur:*'
+              - 'ce:*'
+            Resource: '*'
+          - Effect: Deny
+            Action:
+              - 'iam:DeletePolicy'
+              - 'iam:DeletePolicyVersion'
+              - 'iam:CreatePolicyVersion'
+              - 'iam:SetDefaultPolicyVersion'
+            Resource:
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/root-boundary'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/developer-boundary'
+          - Effect: Deny
+            Action:
+              - 'iam:DeleteUserPermissionsBoundary'
+              - 'iam:DeleteRolePermissionsBoundary'
+            Resource:
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:user/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
+            Condition:
+              StringEquals:
+                'iam:PermissionsBoundary':
+                  - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/root-boundary'
+                  - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/developer-boundary'
+          - Effect: Deny
+            Action:
+              - 'iam:PutUserPermissionsBoundary'
+              - 'iam:PutRolePermissionsBoundary'
+            Resource:
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:user/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
+            Condition:
+              StringNotEquals:
+                'iam:PermissionsBoundary': !Sub 'arn:aws:iam::${AWS::AccountId}:policy/developer-boundary'
+          - Effect: Deny
+            Action:
+              - 'iam:CreateUser'
+              - 'iam:CreateRole'
+            Resource:
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:user/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
+            Condition:
+              StringNotEquals:
+                'iam:PermissionsBoundary': !Sub 'arn:aws:iam::${AWS::AccountId}:policy/developer-boundary'
+          - Effect: Deny
+            NotAction:
+              - 'iam:Get*'
+              - 'iam:List*'
+              - 'sts:AssumeRole'
+              - 'sts:PassRole'
+            Resource: '*'
+            Condition:
+              StringEquals:
+                'iam:ResourceTag/created-for': 'root'
+          - Effect: Deny
+            NotAction:
+              - 'cognito:Describe*'
+              - 'iam:Get*'
+              - 'iam:List*'
+              - 'lambda:Get*'
+              - 'lambda:List*'
+              - 'mobiletargeting:Get*'
+              - 'mobiletargeting:List*'
+              - 'route53:Get*'
+              - 'route53:List*'
+              - 's3:GetBucket*'
+              - 's3:List*'
+              - 'ses:Describe*'
+              - 'ses:Get*'
+              - 'ses:List*'
+              - 'sqs:Get*'
+              - 'sqs:List*'
+              - 'sts:AssumeRole'
+            Resource: '*'
+            Condition:
+              StringEquals:
+                'iam:ResourceTag/environment': 'prod'
 
   # Roles
 
@@ -85,8 +186,7 @@ Resources:
             Principal:
               AWS:
                 - !Sub 'arn:aws:iam::${AWS::AccountId}:user/david'
-            Action:
-              - 'sts:AssumeRole'
+            Action: 'sts:AssumeRole'
           - Effect: Allow
             Principal:
               AWS: !Sub '${AWS::AccountId}'
@@ -101,6 +201,8 @@ Resources:
           Value: 'root-infrastructure'
         - Key: 'created-for'
           Value: 'root'
+        - Key: 'environment'
+          Value: 'prod'
 
   DeveloperRole:
     Type: AWS::IAM::Role
@@ -114,24 +216,57 @@ Resources:
               AWS:
                 - !Sub 'arn:aws:iam::${AWS::AccountId}:user/adam'
                 - !Sub 'arn:aws:iam::${AWS::AccountId}:user/david'
-            Action:
-              - 'sts:AssumeRole'
+            Action: 'sts:AssumeRole'
           - Effect: Allow
             Principal:
               AWS: !Sub '${AWS::AccountId}'
             Action: 'sts:AssumeRole'
-      Description: Power user access
+      Description: Non-production access
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/IAMFullAccess
         - arn:aws:iam::aws:policy/PowerUserAccess
       MaxSessionDuration: 3600
-      PermissionsBoundary: !Sub '${RootPermissionBoundary}'
+      PermissionsBoundary: !Sub '${DeveloperPermissionBoundary}'
       RoleName: developer
       Tags:
         - Key: 'created-by'
           Value: 'root-infrastructure'
         - Key: 'created-for'
           Value: 'root'
+        - Key: 'environment'
+          Value: 'prod'
+
+  FullAccessRole:
+    Type: AWS::IAM::Role
+    DeletionPolicy: Retain
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !Sub 'arn:aws:iam::${AWS::AccountId}:user/adam'
+                - !Sub 'arn:aws:iam::${AWS::AccountId}:user/david'
+            Action: 'sts:AssumeRole'
+          - Effect: Allow
+            Principal:
+              AWS: !Sub '${AWS::AccountId}'
+            Action: 'sts:AssumeRole'
+      Description: Full production access
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/IAMFullAccess
+        - arn:aws:iam::aws:policy/PowerUserAccess
+      MaxSessionDuration: 3600
+      PermissionsBoundary: !Sub '${RootPermissionBoundary}'
+      RoleName: full-access
+      Tags:
+        - Key: 'created-by'
+          Value: 'root-infrastructure'
+        - Key: 'created-for'
+          Value: 'root'
+        - Key: 'environment'
+          Value: 'prod'
 
   ReadOnlyRole:
     Type: AWS::IAM::Role
@@ -155,6 +290,8 @@ Resources:
           Value: 'root-infrastructure'
         - Key: 'created-for'
           Value: 'root'
+        - Key: 'environment'
+          Value: 'prod'
 
   # Groups
 
@@ -170,6 +307,12 @@ Resources:
     Properties:
       GroupName: Developers
 
+  FullAccessGroup:
+    Type: AWS::IAM::Group
+    DeletionPolicy: Retain
+    Properties:
+      GroupName: FullAccess
+
   # Users
 
   AdamUser:
@@ -178,12 +321,14 @@ Resources:
     Properties:
       Groups:
         - !Sub '${DeveloperGroup}'
-      PermissionsBoundary: !Sub '${RootPermissionBoundary}'
+      PermissionsBoundary: !Sub '${DeveloperPermissionBoundary}'
       Tags:
         - Key: 'created-by'
           Value: 'root-infrastructure'
         - Key: 'created-for'
           Value: 'root'
+        - Key: 'environment'
+          Value: 'prod'
       UserName: adam
 
   DavidUser:
@@ -193,11 +338,14 @@ Resources:
       Groups:
         - !Sub '${AdminGroup}'
         - !Sub '${DeveloperGroup}'
+        - !Sub '${FullAccessGroup}'
       Tags:
         - Key: 'created-by'
           Value: 'root-infrastructure'
         - Key: 'created-for'
           Value: 'root'
+        - Key: 'environment'
+          Value: 'prod'
       UserName: david
 
   InfraAdminUser:
@@ -209,7 +357,9 @@ Resources:
           Value: 'root-infrastructure'
         - Key: 'created-for'
           Value: 'root'
-      UserName: root-infra-admin
+        - Key: 'environment'
+          Value: 'prod'
+      UserName: root-admin-infra
 
   InfraChooseeUser:
     Type: AWS::IAM::User
@@ -220,7 +370,9 @@ Resources:
           Value: 'root-infrastructure'
         - Key: 'created-for'
           Value: 'root'
-      UserName: root-infra-choosee
+        - Key: 'environment'
+          Value: 'prod'
+      UserName: root-choosee-infra
 
   InfraDbowlandUser:
     Type: AWS::IAM::User
@@ -231,7 +383,9 @@ Resources:
           Value: 'root-infrastructure'
         - Key: 'created-for'
           Value: 'root'
-      UserName: root-infra-dbowland
+        - Key: 'environment'
+          Value: 'prod'
+      UserName: root-dbowland-infra
 
   InfraEmailsUser:
     Type: AWS::IAM::User
@@ -242,7 +396,9 @@ Resources:
           Value: 'root-infrastructure'
         - Key: 'created-for'
           Value: 'root'
-      UserName: root-infra-emails
+        - Key: 'environment'
+          Value: 'prod'
+      UserName: root-emails-infra
 
   InfraJokesUser:
     Type: AWS::IAM::User
@@ -253,7 +409,9 @@ Resources:
           Value: 'root-infrastructure'
         - Key: 'created-for'
           Value: 'root'
-      UserName: root-infra-jokes
+        - Key: 'environment'
+          Value: 'prod'
+      UserName: root-jokes-infra
 
   InfraLinksUser:
     Type: AWS::IAM::User
@@ -264,7 +422,9 @@ Resources:
           Value: 'root-infrastructure'
         - Key: 'created-for'
           Value: 'root'
-      UserName: root-infra-links
+        - Key: 'environment'
+          Value: 'prod'
+      UserName: root-links-infra
 
   # Policies
 
@@ -286,6 +446,7 @@ Resources:
             Resource:
               - !Sub '${AdminRole.Arn}'
               - !Sub '${DeveloperRole.Arn}'
+              - !Sub '${FullAccessRole.Arn}'
               - !Sub '${ReadOnlyRole.Arn}'
       PolicyName: assume-administrator-role
       Users:
@@ -310,6 +471,27 @@ Resources:
               - !Sub '${DeveloperRole.Arn}'
               - !Sub '${ReadOnlyRole.Arn}'
       PolicyName: assume-developer-role
+
+  AssumeFullAccessGroupPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      Groups:
+        - !Sub '${FullAccessGroup}'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'iam:Get*'
+              - 'iam:List*'
+            Resource: '*'
+          - Effect: Allow
+            Action: 'sts:AssumeRole'
+            Resource:
+              - !Sub '${DeveloperRole.Arn}'
+              - !Sub '${FullAccessRole.Arn}'
+              - !Sub '${ReadOnlyRole.Arn}'
+      PolicyName: assume-full-access-role
       Users:
         - !Sub '${InfraChooseeUser}'
         - !Sub '${InfraDbowlandUser}'
@@ -327,6 +509,7 @@ Resources:
       Groups:
         - !Sub '${AdminGroup}'
         - !Sub '${DeveloperGroup}'
+        - !Sub '${FullAccessGroup}'
       ManagedPolicyName: manage-own-credentials
       PolicyDocument:
         Version: '2012-10-17'
@@ -392,6 +575,7 @@ Resources:
       Groups:
         - !Sub '${AdminGroup}'
         - !Sub '${DeveloperGroup}'
+        - !Sub '${FullAccessGroup}'
       ManagedPolicyName: require-mfa
       PolicyDocument:
         Version: '2012-10-17'

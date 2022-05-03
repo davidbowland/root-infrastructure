@@ -426,6 +426,19 @@ Resources:
           Value: 'prod'
       UserName: root-links-infra
 
+  InfraScatterUser:
+    Type: AWS::IAM::User
+    Properties:
+      PermissionsBoundary: !Sub '${RootPermissionBoundary}'
+      Tags:
+        - Key: 'created-by'
+          Value: 'root-infrastructure'
+        - Key: 'created-for'
+          Value: 'root'
+        - Key: 'environment'
+          Value: 'prod'
+      UserName: root-links-scatter
+
   # Policies
 
   AssumeAdminGroupPolicy:

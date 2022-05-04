@@ -511,6 +511,7 @@ Resources:
         - !Sub '${InfraEmailsUser}'
         - !Sub '${InfraJokesUser}'
         - !Sub '${InfraLinksUser}'
+        - !Sub '${InfraScatterUser}'
 
   # Managed Policies
 

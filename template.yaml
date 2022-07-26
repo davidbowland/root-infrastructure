@@ -470,6 +470,13 @@ Resources:
       PolicyName: assume-administrator-role
       Users:
         - !Sub '${InfraAdminUser}'
+        - !Sub '${InfraChooseeUser}'
+        - !Sub '${InfraDbdBuildMakerUser}'
+        - !Sub '${InfraDbowlandUser}'
+        - !Sub '${InfraEmailsUser}'
+        - !Sub '${InfraJokesUser}'
+        - !Sub '${InfraLinksUser}'
+        - !Sub '${InfraScatterUser}'
 
   AssumeDeveloperGroupPolicy:
     Type: AWS::IAM::Policy

@@ -513,6 +513,7 @@ Resources:
       PolicyName: assume-full-access-role
       Users:
         - !Sub '${InfraChooseeUser}'
+        - !Sub '${InfraDbdBuildMakerUser}'
         - !Sub '${InfraDbowlandUser}'
         - !Sub '${InfraEmailsUser}'
         - !Sub '${InfraJokesUser}'

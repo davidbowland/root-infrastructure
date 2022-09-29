@@ -622,3 +622,38 @@ Resources:
             Condition:
               BoolIfExists:
                 'aws:MultiFactorAuthPresent': 'false'
+
+  # S3
+
+  BackupBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - BucketKeyEnabled: false
+            ServerSideEncryptionByDefault:
+              SSEAlgorithm: 'AES256'
+      BucketName: dbowland-backups
+      LifecycleConfiguration:
+        Rules:
+          - NoncurrentVersionExpiration:
+              NoncurrentDays: 30
+            Status: Enabled
+            Transitions:
+              - TransitionInDays: 7
+                StorageClass: GLACIER
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: 'created-by'
+          Value: 'root-infrastructure'
+        - Key: 'created-for'
+          Value: 'root'
+        - Key: 'environment'
+          Value: 'prod'
+      VersioningConfiguration:
+        Status: Enabled

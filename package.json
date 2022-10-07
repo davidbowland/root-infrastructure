@@ -18,7 +18,7 @@
     "deploy": "./deploy.sh",
     "prepare": "if [ \"$NODE_ENV\" != \"production\" ]; then husky install ; fi",
     "lint": "prettier --write .",
-    "update": "ncu -u && npm i && npm dedupe"
+    "update": "ncu -u && npm i && npm audit fix && npm dedupe"
   },
   "dependencies": {},
   "devDependencies": {

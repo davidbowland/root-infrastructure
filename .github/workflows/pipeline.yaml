@@ -17,14 +17,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout latest code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install Python 2
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
       - name: Install AWS SAM
-        uses: aws-actions/setup-sam@v1
+        uses: aws-actions/setup-sam@v2
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout latest code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install Node 18
         uses: actions/setup-node@v2
         with:

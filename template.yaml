@@ -258,7 +258,6 @@ Resources:
         - arn:aws:iam::aws:policy/IAMFullAccess
         - arn:aws:iam::aws:policy/PowerUserAccess
       MaxSessionDuration: 3600
-      PermissionsBoundary: !Sub '${RootPermissionBoundary}'
       RoleName: full-access
       Tags:
         - Key: 'created-by'

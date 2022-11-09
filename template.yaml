@@ -20,7 +20,8 @@ Resources:
           - Effect: Deny
             Action:
               - 'account:*'
-              - 'aws-portal:Modify*'
+              - 'billing:*'
+              - 'payments:*'
               - 'savingsplans:*'
               - 'cur:*'
               - 'ce:*'
@@ -93,7 +94,8 @@ Resources:
           - Effect: Deny
             Action:
               - 'account:*'
-              - 'aws-portal:Modify*'
+              - 'billing:*'
+              - 'payments:*'
               - 'savingsplans:*'
               - 'cur:*'
               - 'ce:*'

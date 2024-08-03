@@ -1,14 +1,15 @@
 name: Pipeline
 
-on:
-  push:
-    branches:
-      - 'master'
-
 env:
   TEMPLATE_NAME: template.yaml
   PROD_PIPELINE_EXECUTION_ROLE: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/administrator
   PROD_STACK_NAME: root-infrastructure
+  HUSKY: 0
+
+on: push
+
+permissions:
+  contents: write
 
 jobs:
   deploy-production:
@@ -19,14 +20,14 @@ jobs:
       - name: Checkout latest code
         uses: actions/checkout@v4
       - name: Install Python 3
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.8
       - name: Install AWS SAM
         uses: aws-actions/setup-sam@v2
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -52,10 +53,10 @@ jobs:
     steps:
       - name: Checkout latest code
         uses: actions/checkout@v4
-      - name: Install Node 18
-        uses: actions/setup-node@v3
+      - name: Install Node 20
+        uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
 
       - name: Set git name and email
         run: |
@@ -64,7 +65,4 @@ jobs:
       - name: Bump the minor version
         run: npm version minor
       - name: Push tag created by version bump
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
+        run: git push --follow-tags

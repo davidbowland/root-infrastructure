@@ -216,7 +216,6 @@ Resources:
           - Effect: Allow
             Principal:
               AWS:
-                - !Sub 'arn:aws:iam::${AWS::AccountId}:user/adam'
                 - !Sub 'arn:aws:iam::${AWS::AccountId}:user/david'
             Action: 'sts:AssumeRole'
           - Effect: Allow
@@ -248,7 +247,6 @@ Resources:
           - Effect: Allow
             Principal:
               AWS:
-                - !Sub 'arn:aws:iam::${AWS::AccountId}:user/adam'
                 - !Sub 'arn:aws:iam::${AWS::AccountId}:user/david'
             Action: 'sts:AssumeRole'
           - Effect: Allow
@@ -279,7 +277,6 @@ Resources:
           - Effect: Allow
             Principal:
               AWS:
-                - !Sub 'arn:aws:iam::${AWS::AccountId}:user/adam'
                 - !Sub 'arn:aws:iam::${AWS::AccountId}:user/david'
             Action:
               - 'sts:AssumeRole'
@@ -315,22 +312,6 @@ Resources:
       GroupName: FullAccess
 
   # Users
-
-  AdamUser:
-    Type: AWS::IAM::User
-    DeletionPolicy: Retain
-    Properties:
-      Groups:
-        - !Sub '${DeveloperGroup}'
-      PermissionsBoundary: !Sub '${DeveloperPermissionBoundary}'
-      Tags:
-        - Key: 'created-by'
-          Value: 'root-infrastructure'
-        - Key: 'created-for'
-          Value: 'root'
-        - Key: 'environment'
-          Value: 'prod'
-      UserName: adam
 
   DavidUser:
     Type: AWS::IAM::User

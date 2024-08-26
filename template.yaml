@@ -495,6 +495,25 @@ Resources:
         - !Sub '${InfraJokesUser}'
         - !Sub '${InfraLinksUser}'
 
+  UploadBackupsPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:Describe*'
+              - 's3:Get*'
+              - 's3:List*'
+              - 's3:PutObject'
+            Resource:
+              - !Sub '${BackupBucket.Arn}'
+              - !Sub '${BackupBucket.Arn}/*'
+      PolicyName: upload-dbowland-backups
+      Users:
+        - !Sub '${DavidUser}'
+
   # Managed Policies
 
   ManageOwnCredentialsPolicy:
@@ -605,6 +624,9 @@ Resources:
       BucketName: dbowland-backups
       LifecycleConfiguration:
         Rules:
+          - AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 1
+            Status: Enabled
           - NoncurrentVersionExpiration:
               NoncurrentDays: 30
             Status: Enabled

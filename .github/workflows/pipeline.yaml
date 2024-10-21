@@ -1,6 +1,7 @@
 name: Pipeline
 
 env:
+  GIT_EMAIL: ${{ secrets.GIT_EMAIL }}
   TEMPLATE_NAME: template.yaml
   PROD_PIPELINE_EXECUTION_ROLE: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/administrator
   PROD_STACK_NAME: root-infrastructure
@@ -60,8 +61,8 @@ jobs:
 
       - name: Set git name and email
         run: |
-          git config --local user.email "dbowland1+bot@gmail.com"
-          git config --local user.name "github-actions[bot]"
+          git config --local user.email "${GIT_EMAIL}"
+          git config --local user.name "github-actions[bot]"c
       - name: Bump the minor version
         run: npm version minor
       - name: Push tag created by version bump

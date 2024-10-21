@@ -21,8 +21,8 @@
     "update": "ncu --target minor --upgrade && npm audit fix --audit-level=none && npm dedupe"
   },
   "devDependencies": {
-    "husky": "^9.1.5",
-    "lint-staged": "^15.2.9",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
     "prettier": "^3.3.3"
   },
   "lint-staged": {

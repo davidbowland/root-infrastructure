@@ -19,12 +19,20 @@ Resources:
             Resource: '*'
           - Effect: Deny
             Action:
-              - 'account:*'
-              - 'billing:*'
-              - 'payments:*'
-              - 'savingsplans:*'
-              - 'cur:*'
-              - 'ce:*'
+              - 'account:Accept*'
+              - 'account:Close*'
+              - 'account:Delete*'
+              - 'account:Disable*'
+              - 'account:Enable*'
+              - 'account:Put*'
+              - 'account:Start*'
+              - 'billing:Put*'
+              - 'billing:Redeem*'
+              - 'billing:Update*'
+              - 'payments:Create*'
+              - 'payments:Delete*'
+              - 'payments:Make*'
+              - 'payments:Update*'
             Resource: '*'
           - Effect: Deny
             Action:
@@ -39,16 +47,6 @@ Resources:
             Action:
               - 'iam:DeleteUserPermissionsBoundary'
               - 'iam:DeleteRolePermissionsBoundary'
-            Resource:
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:user/*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
-            Condition:
-              StringEquals:
-                'iam:PermissionsBoundary':
-                  - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/root-boundary'
-                  - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/developer-boundary'
-          - Effect: Deny
-            Action:
               - 'iam:PutUserPermissionsBoundary'
               - 'iam:PutRolePermissionsBoundary'
             Resource:
@@ -59,16 +57,22 @@ Resources:
                 'iam:PermissionsBoundary': !Sub 'arn:aws:iam::${AWS::AccountId}:policy/root-boundary'
           - Effect: Deny
             Action:
-              - 'iam:CreateUser'
-              - 'iam:CreateRole'
+              - 'iam:PutUserPolicy'
+              - 'iam:PutGroupPolicy'
+              - 'iam:PutRolePolicy'
             Resource:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:user/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:group/*'
               - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
             Condition:
-              StringNotEquals:
-                'iam:PermissionsBoundary':
-                  - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/root-boundary'
-                  - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/developer-boundary'
+              ArnLike:
+                'iam:PolicyARN':
+                  - 'arn:aws:iam::aws:policy/IAMFullAccess'
+                  - 'arn:aws:iam::aws:policy/AdministratorAccess'
+          - Effect: Deny
+            Action:
+              - 'cloudformation:*'
+            Resource: !Sub 'arn:aws:cloudformation:us-east-1:${AWS::AccountId}:stack/root-infrastructure/*'
           - Effect: Deny
             NotAction:
               - 'iam:Get*'
@@ -83,7 +87,7 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     DeletionPolicy: Retain
     Properties:
-      Description: Permission boundary blocking access to production resources
+      Description: Permission boundary blocking access to administrative tasks such as user management
       ManagedPolicyName: developer-boundary
       PolicyDocument:
         Version: '2012-10-17'
@@ -93,12 +97,20 @@ Resources:
             Resource: '*'
           - Effect: Deny
             Action:
-              - 'account:*'
-              - 'billing:*'
-              - 'payments:*'
-              - 'savingsplans:*'
-              - 'cur:*'
-              - 'ce:*'
+              - 'account:Accept*'
+              - 'account:Close*'
+              - 'account:Delete*'
+              - 'account:Disable*'
+              - 'account:Enable*'
+              - 'account:Put*'
+              - 'account:Start*'
+              - 'billing:Put*'
+              - 'billing:Redeem*'
+              - 'billing:Update*'
+              - 'payments:Create*'
+              - 'payments:Delete*'
+              - 'payments:Make*'
+              - 'payments:Update*'
             Resource: '*'
           - Effect: Deny
             Action:
@@ -113,16 +125,6 @@ Resources:
             Action:
               - 'iam:DeleteUserPermissionsBoundary'
               - 'iam:DeleteRolePermissionsBoundary'
-            Resource:
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:user/*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
-            Condition:
-              StringEquals:
-                'iam:PermissionsBoundary':
-                  - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/root-boundary'
-                  - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/developer-boundary'
-          - Effect: Deny
-            Action:
               - 'iam:PutUserPermissionsBoundary'
               - 'iam:PutRolePermissionsBoundary'
             Resource:
@@ -133,42 +135,26 @@ Resources:
                 'iam:PermissionsBoundary': !Sub 'arn:aws:iam::${AWS::AccountId}:policy/developer-boundary'
           - Effect: Deny
             Action:
-              - 'iam:CreateUser'
-              - 'iam:CreateRole'
+              - 'iam:PutUserPolicy'
+              - 'iam:PutGroupPolicy'
+              - 'iam:PutRolePolicy'
             Resource:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:user/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:group/*'
               - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
             Condition:
-              StringNotEquals:
-                'iam:PermissionsBoundary': !Sub 'arn:aws:iam::${AWS::AccountId}:policy/developer-boundary'
+              ArnLike:
+                'iam:PolicyARN':
+                  - 'arn:aws:iam::aws:policy/IAMFullAccess'
+                  - 'arn:aws:iam::aws:policy/AdministratorAccess'
+          - Effect: Deny
+            Action:
+              - 'cloudformation:*'
+            Resource: !Sub 'arn:aws:cloudformation:us-east-1:${AWS::AccountId}:stack/root-infrastructure/*'
           - Effect: Deny
             NotAction:
               - 'iam:Get*'
               - 'iam:List*'
-              - 'sts:AssumeRole'
-              - 'sts:PassRole'
-            Resource: '*'
-            Condition:
-              StringEquals:
-                'iam:ResourceTag/created-for': 'root'
-          - Effect: Deny
-            NotAction:
-              - 'cognito:Describe*'
-              - 'iam:Get*'
-              - 'iam:List*'
-              - 'lambda:Get*'
-              - 'lambda:List*'
-              - 'mobiletargeting:Get*'
-              - 'mobiletargeting:List*'
-              - 'route53:Get*'
-              - 'route53:List*'
-              - 's3:GetBucket*'
-              - 's3:List*'
-              - 'ses:Describe*'
-              - 'ses:Get*'
-              - 'ses:List*'
-              - 'sqs:Get*'
-              - 'sqs:List*'
               - 'sts:AssumeRole'
             Resource: '*'
             Condition:
@@ -227,7 +213,7 @@ Resources:
         - arn:aws:iam::aws:policy/IAMFullAccess
         - arn:aws:iam::aws:policy/PowerUserAccess
       MaxSessionDuration: 3600
-      PermissionsBoundary: !Sub '${DeveloperPermissionBoundary}'
+      # PermissionsBoundary: !Sub '${DeveloperPermissionBoundary}'
       RoleName: developer
       Tags:
         - Key: 'created-by'

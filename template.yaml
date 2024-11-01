@@ -213,7 +213,7 @@ Resources:
         - arn:aws:iam::aws:policy/IAMFullAccess
         - arn:aws:iam::aws:policy/PowerUserAccess
       MaxSessionDuration: 3600
-      # PermissionsBoundary: !Sub '${DeveloperPermissionBoundary}'
+      PermissionsBoundary: !Sub '${DeveloperPermissionBoundary}'
       RoleName: developer
       Tags:
         - Key: 'created-by'

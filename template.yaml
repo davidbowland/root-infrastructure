@@ -213,7 +213,7 @@ Resources:
         - arn:aws:iam::aws:policy/IAMFullAccess
         - arn:aws:iam::aws:policy/PowerUserAccess
       MaxSessionDuration: 3600
-      PermissionsBoundary: !Sub '${DeveloperPermissionBoundary}'
+      PermissionsBoundary: !Ref DeveloperPermissionBoundary
       RoleName: developer
       Tags:
         - Key: 'created-by'
@@ -304,9 +304,9 @@ Resources:
     DeletionPolicy: Retain
     Properties:
       Groups:
-        - !Sub '${AdminGroup}'
-        - !Sub '${DeveloperGroup}'
-        - !Sub '${FullAccessGroup}'
+        - !Ref AdminGroup
+        - !Ref DeveloperGroup
+        - !Ref FullAccessGroup
       Tags:
         - Key: 'created-by'
           Value: 'root-infrastructure'
@@ -401,13 +401,25 @@ Resources:
           Value: 'prod'
       UserName: root-links-infra
 
+  InfraSseUser:
+    Type: AWS::IAM::User
+    Properties:
+      Tags:
+        - Key: 'created-by'
+          Value: 'root-infrastructure'
+        - Key: 'created-for'
+          Value: 'root'
+        - Key: 'environment'
+          Value: 'prod'
+      UserName: root-sse-infra
+
   # Policies
 
   AssumeAdminGroupPolicy:
     Type: AWS::IAM::Policy
     Properties:
       Groups:
-        - !Sub '${AdminGroup}'
+        - !Ref AdminGroup
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -425,19 +437,20 @@ Resources:
               - !Sub '${ReadOnlyRole.Arn}'
       PolicyName: assume-administrator-role
       Users:
-        - !Sub '${InfraAdminUser}'
-        - !Sub '${InfraChooseeUser}'
-        - !Sub '${InfraDbdBuildMakerUser}'
-        - !Sub '${InfraDbowlandUser}'
-        - !Sub '${InfraEmailsUser}'
-        - !Sub '${InfraJokesUser}'
-        - !Sub '${InfraLinksUser}'
+        - !Ref InfraAdminUser
+        - !Ref InfraChooseeUser
+        - !Ref InfraDbdBuildMakerUser
+        - !Ref InfraDbowlandUser
+        - !Ref InfraEmailsUser
+        - !Ref InfraJokesUser
+        - !Ref InfraLinksUser
+        - !Ref InfraSseUser
 
   AssumeDeveloperGroupPolicy:
     Type: AWS::IAM::Policy
     Properties:
       Groups:
-        - !Sub '${DeveloperGroup}'
+        - !Ref DeveloperGroup
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -457,7 +470,7 @@ Resources:
     Type: AWS::IAM::Policy
     Properties:
       Groups:
-        - !Sub '${FullAccessGroup}'
+        - !Ref FullAccessGroup
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -474,12 +487,14 @@ Resources:
               - !Sub '${ReadOnlyRole.Arn}'
       PolicyName: assume-full-access-role
       Users:
-        - !Sub '${InfraChooseeUser}'
-        - !Sub '${InfraDbdBuildMakerUser}'
-        - !Sub '${InfraDbowlandUser}'
-        - !Sub '${InfraEmailsUser}'
-        - !Sub '${InfraJokesUser}'
-        - !Sub '${InfraLinksUser}'
+        - !Ref InfraAdminUser
+        - !Ref InfraChooseeUser
+        - !Ref InfraDbdBuildMakerUser
+        - !Ref InfraDbowlandUser
+        - !Ref InfraEmailsUser
+        - !Ref InfraJokesUser
+        - !Ref InfraLinksUser
+        - !Ref InfraSseUser
 
   UploadBackupsPolicy:
     Type: AWS::IAM::Policy
@@ -498,7 +513,7 @@ Resources:
               - !Sub '${BackupBucket.Arn}/*'
       PolicyName: upload-dbowland-backups
       Users:
-        - !Sub '${DavidUser}'
+        - !Ref DavidUser
 
   # Managed Policies
 
@@ -508,9 +523,9 @@ Resources:
     Properties:
       Description: Allow users to manage MFA and change password
       Groups:
-        - !Sub '${AdminGroup}'
-        - !Sub '${DeveloperGroup}'
-        - !Sub '${FullAccessGroup}'
+        - !Ref AdminGroup
+        - !Ref DeveloperGroup
+        - !Ref FullAccessGroup
       ManagedPolicyName: manage-own-credentials
       PolicyDocument:
         Version: '2012-10-17'
@@ -574,9 +589,9 @@ Resources:
     Properties:
       Description: Require MFA for login
       Groups:
-        - !Sub '${AdminGroup}'
-        - !Sub '${DeveloperGroup}'
-        - !Sub '${FullAccessGroup}'
+        - !Ref AdminGroup
+        - !Ref DeveloperGroup
+        - !Ref FullAccessGroup
       ManagedPolicyName: require-mfa
       PolicyDocument:
         Version: '2012-10-17'

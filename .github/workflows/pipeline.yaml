@@ -2,10 +2,10 @@ name: Pipeline
 
 env:
   GIT_EMAIL: ${{ secrets.GIT_EMAIL }}
-  TEMPLATE_NAME: template.yaml
+  HUSKY: 0
   PROD_PIPELINE_EXECUTION_ROLE: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/administrator
   PROD_STACK_NAME: root-infrastructure
-  HUSKY: 0
+  TEMPLATE_NAME: template.yaml
 
 on: push
 

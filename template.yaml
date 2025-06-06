@@ -389,18 +389,6 @@ Resources:
           Value: 'prod'
       UserName: root-jokes-infra
 
-  InfraLinksUser:
-    Type: AWS::IAM::User
-    Properties:
-      Tags:
-        - Key: 'created-by'
-          Value: 'root-infrastructure'
-        - Key: 'created-for'
-          Value: 'root'
-        - Key: 'environment'
-          Value: 'prod'
-      UserName: root-links-infra
-
   InfraSseUser:
     Type: AWS::IAM::User
     Properties:
@@ -443,7 +431,6 @@ Resources:
         - !Ref InfraDbowlandUser
         - !Ref InfraEmailsUser
         - !Ref InfraJokesUser
-        - !Ref InfraLinksUser
         - !Ref InfraSseUser
 
   AssumeDeveloperGroupPolicy:
@@ -493,7 +480,6 @@ Resources:
         - !Ref InfraDbowlandUser
         - !Ref InfraEmailsUser
         - !Ref InfraJokesUser
-        - !Ref InfraLinksUser
         - !Ref InfraSseUser
 
   UploadBackupsPolicy:

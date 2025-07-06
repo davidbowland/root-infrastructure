@@ -341,18 +341,6 @@ Resources:
           Value: 'prod'
       UserName: root-choosee-infra
 
-  InfraDbdBuildMakerUser:
-    Type: AWS::IAM::User
-    Properties:
-      Tags:
-        - Key: 'created-by'
-          Value: 'root-infrastructure'
-        - Key: 'created-for'
-          Value: 'root'
-        - Key: 'environment'
-          Value: 'prod'
-      UserName: root-dbd-build-maker-infra
-
   InfraDbowlandUser:
     Type: AWS::IAM::User
     Properties:
@@ -427,7 +415,6 @@ Resources:
       Users:
         - !Ref InfraAdminUser
         - !Ref InfraChooseeUser
-        - !Ref InfraDbdBuildMakerUser
         - !Ref InfraDbowlandUser
         - !Ref InfraEmailsUser
         - !Ref InfraJokesUser
@@ -476,7 +463,6 @@ Resources:
       Users:
         - !Ref InfraAdminUser
         - !Ref InfraChooseeUser
-        - !Ref InfraDbdBuildMakerUser
         - !Ref InfraDbowlandUser
         - !Ref InfraEmailsUser
         - !Ref InfraJokesUser

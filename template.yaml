@@ -440,6 +440,7 @@ Resources:
         - !Ref InfraAdminUser
         - !Ref InfraChooseeUser
         - !Ref InfraConnectionsUser
+        - !Ref InfraCyoaUser
         - !Ref InfraDbowlandUser
         - !Ref InfraEmailsUser
         - !Ref InfraJokesUser
@@ -489,6 +490,7 @@ Resources:
         - !Ref InfraAdminUser
         - !Ref InfraChooseeUser
         - !Ref InfraConnectionsUser
+        - !Ref InfraCyoaUser
         - !Ref InfraDbowlandUser
         - !Ref InfraEmailsUser
         - !Ref InfraJokesUser

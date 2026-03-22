@@ -515,6 +515,23 @@ Resources:
       Users:
         - !Ref DavidUser
 
+  UseBedrockPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action:
+              - 'aws-marketplace:Subscribe'
+              - 'aws-marketplace:ViewSubscriptions'
+              - 'bedrock:Invoke*'
+              - 'bedrock:List*'
+            Resource: '*'
+            Effect: Allow
+      PolicyName: use-bedrock
+      Users:
+        - !Ref DavidUser
+
   # Managed Policies
 
   ManageOwnCredentialsPolicy:
@@ -598,6 +615,9 @@ Resources:
         Statement:
           - Effect: Deny
             NotAction:
+              - 'aws-marketplace:Subscribe'
+              - 'aws-marketplace:ViewSubscriptions'
+              - 'bedrock:*'
               - 'iam:ChangePassword'
               - 'iam:CreateVirtualMFADevice'
               - 'iam:EnableMFADevice'
